@@ -1,0 +1,11 @@
+interp
+py ${src}
+
+${content}
+
+inputs = ${JSON.stringify(inputs)}
+for inp in inputs:
+    file = open(inp)
+    print()
+    print(${main}(file.read()))
+    file.close()

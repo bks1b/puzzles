@@ -1,0 +1,10 @@
+{
+    "name": "puzzles",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "src/index.js",
+    "author": "bks1b",
+    "dependencies": {
+        "dotenv": "^17.2.1"
+    }
+}

@@ -1,0 +1,17 @@
+comp
+ghc -odir ${temp} -hidir ${temp} -o ${o} ${src}
+
+module Main where
+
+import System.IO
+
+import Data.List
+import Data.Tuple
+import Data.Maybe
+
+${content}
+
+${main} :: String -> String
+
+main :: IO [()]
+main = sequence $ map (\x -> (putStrLn "") >> (readFile x >>= putStrLn . ${main}) >> hFlush stdout) ${JSON.stringify(inputs)}
