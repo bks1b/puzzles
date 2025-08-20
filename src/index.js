@@ -26,21 +26,26 @@ const run = x => new Promise((res, rej) => {
 });
 
 (async () => {
-    ['temp', 'inputs'].forEach(x => existsSync(x) || mkdirSync('temp'));
+    ['temp', 'inputs'].forEach(x => existsSync(x) || mkdirSync(x));
 
     const flags = {};
     let src;
     let dir;
     const inputs = [];
+    const resolveInput = p => {
+        const path = resolve('inputs', src, '..', p);
+        if (!existsSync(path)) {
+            console.log('Unable to resolve input', p);
+            process.exit();
+        }
+        inputs.push(path);
+    };
     for (const arg of process.argv.slice(2)) {
         const m = arg.match(/^--?(.+?)(?:=(.+?))?$/);
         if (m) flags[m[1]] = m[2] || true;
         else {
-            if (src) {
-                const path = resolve('inputs', src, '..', await dir?.getInput?.(src, arg) || arg);
-                if (!existsSync(path)) return console.log('Unable to resolve input', arg);
-                inputs.push(path);
-            } else {
+            if (src) resolveInput(await dir?.getInput?.(src, arg) || arg);
+            else {
                 src = arg;
                 if (!existsSync('puzzles/' + src)) return console.log('Source file not found.');
                 try {
@@ -48,6 +53,10 @@ const run = x => new Promise((res, rej) => {
                 } catch {}
             }
         }
+    }
+    if (!inputs.length) {
+        if (dir?.handleEmpty) resolveInput(await dir.handleEmpty(src));
+        else inputs.push('package.json'); // arbitrary file
     }
     const ext = src.split('.').at(-1);
     const [type, cmd, ...content] = readFileSync(`src/languages/${ext}.txt`, 'utf8').split(/\r?\n/);
@@ -63,10 +72,10 @@ const run = x => new Promise((res, rej) => {
         src: 'temp/main.' + ext,
     }));
     if (type === 'comp') {
-        console.log('\nCompiled in', time, '\bs');
+        console.log('\nCompiled in', time, '\bms');
         [result, time] = await run('.\\temp\\o.exe');
     }
-    console.log('\nExecuted in', time, '\bs');
+    console.log('\nExecuted in', time, '\bms');
     rmSync('temp', { recursive: true });
     dir?.handleResult?.(flags, src, result);
 })().catch(console.error);

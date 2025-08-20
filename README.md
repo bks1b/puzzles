@@ -1,8 +1,11 @@
 # Usage
 
 Run `node . <path> <inputs...>` to run a puzzle. The path is relative to `puzzles`, and input paths are relative to `inputs/<path>`.
+
 The file is inserted into a predefined file to reduce boilerplate, then compiled and/or executed based on its extension.
+
 The file is expected to have a function which takes the input string as its only parameter. By default, it's expected to be called `result`.
+
 Lines which match `!include <path>` are replaced with the file's content at the given path (relative to the current file), and this is repeated recursively. This is useful for sharing functions between different files.
 
 Advent of Code support:
@@ -12,7 +15,7 @@ Advent of Code support:
 - Input arguments are not resolved by path, instead they refer to example code blocks:
   - `<n>` reads the `n`th code block (excluding inline)
   - `<n>i` reads the `n`th code block (including inline)
-  - `inp` reads the puzzle input
+  - `inp` reads the puzzle input (this is the default input if no arguments are given)
 - An `AOC_TOKEN` entry is expected in `.env` to access puzzle inputs and part 2 descriptions, and submit solutions
 
 Examples:
@@ -22,4 +25,5 @@ Examples:
 # Structure
 
 The `src/dirs` directory optionally defines input and output handling for each puzzle directory.
+
 The `src/languages` directory defines compilation/execution and input reading for each supported language.
