@@ -35,6 +35,9 @@ export default {
         }
         return '../' + filename;
     },
+    handleEmpty(src) {
+        return this.getInput(src, 'inp');
+    },
     handleResult: async (f, src, out) => {
         if (!f.sub) return;
         const rl = createInterface(process.stdin, process.stdout);
