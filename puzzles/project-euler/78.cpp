@@ -12,7 +12,7 @@ long partitions(long n) {
         long p = n - (i * (3 * i - 1)) / 2;
         if (p < 0) return cache[n];
         cache[n] = (cache[n] + sign * (partitions(n - (i * (3 * i + 1)) / 2) + partitions(p))) % m;
-        i++; 
+        i++;
         sign *= -1;
     }
 }
