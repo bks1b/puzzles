@@ -28,7 +28,7 @@ solve game = if any (\c -> length (possibilities c) < 1) $ constraints changed
     else if isNothing firstUncertain
         then [changed]
         else if game == changed
-            then concat $ map (\v -> solve $ setCell changed (fromJust firstUncertain) v) [0, 1]
+            then concat $ map (solve . setCell changed (fromJust firstUncertain)) [0, 1]
             else solve changed
     where
         changed = fillCertain $ filterConstraints game

@@ -1,2 +1,5 @@
+intSqrt :: Int -> Int
+intSqrt = floor . sqrt . fromIntegral
+
 isSquare :: Int -> Bool
-isSquare n = s * s == n where s = floor $ sqrt $ fromIntegral n
+isSquare n = s * s == n where s = intSqrt n
