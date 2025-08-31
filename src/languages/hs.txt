@@ -1,5 +1,5 @@
 comp
-ghc -odir ${temp} -hidir ${temp} -o ${o} ${src}
+ghc -odir ${temp} -hidir ${temp} -o ${o} ${src} -Wno-x-partial
 
 module Main where
 

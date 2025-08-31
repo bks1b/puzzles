@@ -1,9 +1,9 @@
 getLocations :: String -> Int -> Int -> ([[Int]], Positions)
 getLocations [] _ _ = ([], [])
-getLocations ('\n' : xs) x y = getLocations xs 0 (y + 1) 
+getLocations ('\n' : xs) x y = getLocations xs 0 (y + 1)
 getLocations (s : xs) x y = ((if s == ' ' then [] else [[x, y]]) ++ a, (if elem s ". " then [] else [([x, y], s)]) ++ b) where (a, b) = getLocations xs (x + 1) y
 
-getSite :: [[Int]] -> [Int] -> [Int] -> [[Int]] 
+getSite :: [[Int]] -> [Int] -> [Int] -> [[Int]]
 getSite a x d = if elem next a then x : getSite a next d else [x] where next = addDir 1 x d
 
 readInput :: String -> ([String], String)
