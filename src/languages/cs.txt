@@ -1,0 +1,15 @@
+comp
+cd ${src.split('/').slice(0, -1)} && csc /nologo /out:${o.split('/').at(-1)}.exe ${src.split('/').at(-1)}
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
+${content}
+
+var files = new string[] { ${JSON.stringify(inputs).slice(1, -1)} };
+foreach (var file in files) {
+    Console.Write("\n");
+    Console.WriteLine(${main}(File.ReadAllText(file)));
+}

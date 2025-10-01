@@ -19,7 +19,7 @@ ${content}
 
 int main() {
     std::cout.setf(std::ios_base::unitbuf);
-    std::string files[] = { ${inputs.map(x => `"${x}"`).join(', ')} };
+    std::string files[] = { ${JSON.stringify(inputs).slice(1, -1)} };
     for (auto path : files) {
         auto size = std::filesystem::file_size(path);
         std::string content(size, '\0');
