@@ -28,7 +28,7 @@ solve grid = if isNothing firstUnknown
         -- values for which only 1 index is possible in a "region"
         changedByValues = foldl (\g v -> let possible = getPossibleCells g v in foldl
             (\h (i, f) -> let a = filter (\j -> f j == i) possible in if length a == 1 then setCell h (a !! 0) v else h) g
-            $ concat $ map (\i -> map (\f -> (i, f)) [getBlockIdx, fst . getPos, snd . getPos]) blockIndices) grid values
+            $ concat $ map (\i -> map (i, ) [getBlockIdx, fst . getPos, snd . getPos]) blockIndices) grid values
         -- indices for which only 1 value is possible
         changed = foldl (\g i -> let v = getPossibleValues g i in if length v == 1 then setCell g i $ v !! 0 else g) changedByValues indices
         firstUnknown = elemIndex "" changed

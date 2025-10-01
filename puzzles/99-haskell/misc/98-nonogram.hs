@@ -17,7 +17,7 @@ filterConstraints game = game {
 fillCertain :: Game -> Game
 fillCertain game = foldl (\g (c, i) -> setCell g ((cFlip c cellIdx) g i $ idx c) $ (possibilities c) !! 0 !! i) game
     $ concat
-    $ map (\c -> map (\i -> (c, i))
+    $ map (\c -> map (c, )
     $ filter (\i -> (length $ nub $ map (!! i) $ possibilities c) == 1) [0..(cFlip c size) game False True])
     $ constraints game
 
