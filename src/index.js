@@ -20,7 +20,7 @@ const run = (x, i) => new Promise((res, rej) => {
     const proc = exec(x);
     proc.stdout.pipe(process.stdout);
     proc.stderr.pipe(process.stderr);
-    if (i) proc.stdin.write(i + (i.endsWith('\n') ? '' : '\n'));
+    if (i) proc.stdin.end(i + (i.endsWith('\n') ? '' : '\n'));
     let last = '';
     proc.stdout.on('data', d => last = d.trim() || last);
     proc.on('close', code => code ? rej('') : res([last, Date.now() - start]));
