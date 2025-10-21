@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-int[][] lines = new int[2][];
+var lines = new int[2][];
 for (int i = 0; i < 2; i++) {
     Console.ReadLine();
     lines[i] = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
