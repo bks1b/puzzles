@@ -30,6 +30,7 @@ int main() {
     for (int i = 0; i < total; i++)
         for (int k = 0; k < n; k++)
             std::cout << result[i * n + k] << (k < n - 1 ? " " : "\n");
+    delete[] result;
     return 0;
 }
 

@@ -36,7 +36,7 @@ const run = (x, i) => new Promise((res, rej) => {
     const resolveInput = p => {
         const path = resolve('inputs', src, '..', p);
         if (!existsSync(path)) {
-            console.log('Unable to resolve input', p);
+            console.error('Unable to resolve input', p);
             process.exit();
         }
         inputs.push(path);
@@ -48,7 +48,7 @@ const run = (x, i) => new Promise((res, rej) => {
             if (src) resolveInput(await dir?.getInput?.(src, arg) || arg);
             else {
                 src = arg;
-                if (!existsSync('puzzles/' + src)) return console.log('Source file not found.');
+                if (!existsSync('puzzles/' + src)) return console.error('Source file not found.');
                 try {
                     dir = (await import('./dirs/' + src.split(/[\/\\]/)[0] + '.js')).default;
                 } catch {}
@@ -70,7 +70,7 @@ const run = (x, i) => new Promise((res, rej) => {
     }));
     let toRun;
     if (type === 'comp') {
-        console.log('\nCompiled in', (await run(evalWith(cmd, {
+        console.error('\nCompiled in', (await run(evalWith(cmd, {
             temp: 'temp',
             o: 'temp/o.exe',
             src: 'temp/main.' + ext,
@@ -84,6 +84,7 @@ const run = (x, i) => new Promise((res, rej) => {
     let result;
     let time = 0;
     if (dir?.stdin) for (const i of inputs) {
+        console.log();
         const r = await run(toRun, readFileSync(i, 'utf8'));
         result = r[0];
         time += r[1];
