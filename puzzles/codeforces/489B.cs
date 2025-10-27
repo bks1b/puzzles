@@ -1,10 +1,7 @@
-using System;
-using System.Linq;
-
 var lines = new int[2][];
 for (int i = 0; i < 2; i++) {
     Console.ReadLine();
-    lines[i] = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+    lines[i] = Console.ReadLine()!.Split(' ').Select(int.Parse).ToArray();
     Array.Sort(lines[i]);
 }
 int count = 0;

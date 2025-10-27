@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
-
-int n = int.Parse(Console.ReadLine());
-var arr = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+int n = int.Parse(Console.ReadLine()!);
+var arr = Console.ReadLine()!.Split(' ').Select(int.Parse).ToArray();
 Array.Sort(arr);
 int start = 0;
 int max = 0;

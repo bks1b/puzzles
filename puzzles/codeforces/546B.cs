@@ -1,9 +1,5 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 Console.ReadLine();
-var data = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+var data = Console.ReadLine()!.Split(' ').Select(int.Parse).ToArray();
 int diff = 0;
 var dict = new Dictionary<int, int>();
 foreach (int x in data) {

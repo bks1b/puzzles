@@ -1,9 +1,6 @@
-using System;
-using System.Linq;
-
 while (Console.Read() != ' ');
-int k = int.Parse(Console.ReadLine());
-var arr = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+int k = int.Parse(Console.ReadLine()!);
+var arr = Console.ReadLine()!.Split(' ').Select(int.Parse).ToArray();
 int minI = 0;
 int min = 0;
 int sum = 0;
