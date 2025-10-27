@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { exec } from 'child_process';
 import { resolve } from 'path';
 import { config } from 'dotenv';
@@ -90,6 +90,11 @@ const run = (x, i) => new Promise((res, rej) => {
         time += r[1];
     } else [result, time] = await run(toRun);
     console.log('\nExecuted in', time, '\bms');
-    rmSync('temp', { recursive: true });
     dir?.handleResult?.(flags, src, result);
 })().catch(console.error);
+
+const kill = () => process.platform === 'win32'
+    ? exec(`taskkill /PID ${process.pid} /T /F`)
+    : process.kill(process.pid);
+process.on('SIGINT', kill);
+process.on('SIGTERM', kill);

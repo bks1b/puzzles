@@ -1,10 +1,5 @@
-comp
-cd ${src.split('/').slice(0, -1)} && csc /nologo /out:${o.split('/').at(-1)}.exe ${src.split('/').at(-1)}
-
-using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
+interp
+dotnet run --property WarningLevel=0 --file ${src}
 
 ${content}
 
