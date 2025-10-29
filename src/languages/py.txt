@@ -1,11 +1,10 @@
 interp
 py ${src}
 
+import sys
+
 ${content}
 
-inputs = ${JSON.stringify(inputs)}
-for inp in inputs:
-    file = open(inp)
-    print()
-    print(${main}(file.read()))
-    file.close()
+file = open(sys.argv[1])
+print(${main}(file.read()))
+file.close()
