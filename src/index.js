@@ -8,15 +8,14 @@ config({ quiet: true });
 const INCLUDE = '!include ';
 const INTERACTIVE = '_test.js';
 
-const doubleEscape = x => x.replaceAll('\\', '\\\\');
-const evalWith = (str, obj) => eval(`${Object.entries(obj).map(e => `const ${e[0]}=${JSON.stringify(e[1])};`).join('')};\`${doubleEscape(str)}\`;`);
+const substitute = (s, o) => Object.entries(o).reduce((a, e) => a.replaceAll('${' + e[0] + '}', e[1]), s);
 
 const resolveIncludes = path => readFileSync(path, 'utf8')
     .split(/\r?\n/)
     .map(x => x.startsWith(INCLUDE) ? resolveIncludes(resolve(path, '..', x.slice(INCLUDE.length).trim())) : x)
     .join('\n');
 
-const run = (x, obj = {}) => new Promise(async (res, rej) => {
+const run = (x, obj = {}) => new Promise((res, rej) => {
     const start = Date.now();
     const proc = exec(x);
     proc.stderr.pipe(process.stderr);
@@ -25,10 +24,7 @@ const run = (x, obj = {}) => new Promise(async (res, rej) => {
     let last = '';
     proc.stdout.on('data', d => last = d.trim() || last);
     proc.on('close', code => code ? rej('') : res([last, Date.now() - start]));
-    if (obj.cb) {
-        await obj.cb(proc);
-        if (proc.exitCode === null) proc.kill();
-    }
+    obj.cb?.(proc).then(() => proc.exitCode === null && proc.kill());
 });
 
 (async () => {
@@ -69,52 +65,46 @@ const run = (x, obj = {}) => new Promise(async (res, rej) => {
         else inputs.push('package.json'); // arbitrary file
     }
     const ext = src.split('.').at(-1);
-    const [type, cmd, ...content] = readFileSync(`src/languages/${ext}.txt`, 'utf8').split(/\r?\n/);
-
-    const resolved = resolveIncludes('puzzles/' + src);
-    writeFileSync('temp/main.' + ext, dir?.stdin ? resolved : evalWith(content.join('\n'), {
-        inputs: inputs.map(doubleEscape),
-        main: dir?.mainName?.(flags) || 'result',
-        content: resolved,
-    }));
-    let toRun;
-    if (type === 'comp') {
-        console.error('\nCompiled in', (await run(evalWith(cmd, {
-            temp: 'temp',
-            o: 'temp/o.exe',
-            src: 'temp/main.' + ext,
-        })))[1], '\bms');
-        toRun = '.\\temp\\o.exe';
-    } else toRun = evalWith(cmd, {
-        temp: 'temp',
+    let [type, cmd, ...content] = readFileSync(`src/languages/${ext}.txt`, 'utf8').split(/\r?\n/);
+    cmd = substitute(cmd, {
         o: 'temp/o.exe',
         src: 'temp/main.' + ext,
     });
+    const toRun = type === 'comp'
+        ? content[0]
+            ? content.shift()
+            : '.\\temp\\o.exe'
+        : cmd;
+
+    const resolved = resolveIncludes('puzzles/' + src);
+    writeFileSync('temp/main.' + ext, dir?.stdin ? resolved : substitute(content.join('\n'), {
+        main: dir?.mainName?.(flags) || 'result',
+        content: resolved,
+    }));
+    if (type === 'comp') console.error('Compiled in', (await run(cmd))[1], '\bms');
+    if (interactive) {
+        const runTest = (cb, noPipe) => run(toRun, {
+            noPipe,
+            cb: proc => cb(
+                () => new Promise(r => proc.stdout.once('data', d => r(d.trim()))),
+                d => {
+                    if (!noPipe) process.stdout.write(d);
+                    proc.stdin.write(d);
+                },
+            ),
+        });
+        eval(`${runTest};(async()=>{${readFileSync('puzzles/' + src + INTERACTIVE, 'utf8')}})();`);
+        return;
+    }
     let result;
-    let time = 0;
-    if (dir?.stdin)
-        if (interactive) {
-            const runTest = (cb, noPipe) => run(toRun, {
-                noPipe,
-                cb: proc => cb(
-                    () => new Promise(r => proc.stdout.once('data', d => r(d.trim()))),
-                    d => {
-                        if (!noPipe) process.stdout.write(d);
-                        proc.stdin.write(d);
-                    },
-                ),
-            }).then(r => time += r[1]);
-            console.log();
-            await eval(`${runTest};(async()=>{${readFileSync('puzzles/' + src + INTERACTIVE, 'utf8')}})();`);
-        } else for (const i of inputs) {
-            console.log();
-            const r = await run(toRun, { stdin: readFileSync(i, 'utf8') });
-            result = r[0];
-            time += r[1];
-        }
-    else [result, time] = await run(toRun);
-    console.log('\nExecuted in', time, '\bms');
-    if (!interactive) dir?.handleResult?.(flags, src, result);
+    for (const i of inputs) {
+        const r = await run(...dir?.stdin
+            ? [toRun, { stdin: readFileSync(i, 'utf8') }]
+            : [toRun + ' "' + i + '"']);
+        result = r[0];
+        console.log('Executed in', r[1], '\bms');
+    }
+    dir?.handleResult?.(flags, src, result);
 })().catch(console.error);
 
 const kill = () => process.platform === 'win32'

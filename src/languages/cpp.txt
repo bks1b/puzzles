@@ -17,16 +17,13 @@ g++ ${src} -o ${o} -std=c++20
 
 ${content}
 
-int main() {
+int main(int, char **argv) {
     std::cout.setf(std::ios_base::unitbuf);
-    std::string files[] = { ${JSON.stringify(inputs).slice(1, -1)} };
-    for (auto path : files) {
-        auto size = std::filesystem::file_size(path);
-        std::string content(size, '\0');
-        std::ifstream file(path);
-        file.read(&content[0], size);
-        file.close();
-        std::cout << "\n" << ${main}(content) << "\n";
-    }
+    auto size = std::filesystem::file_size(argv[1]);
+    std::string content(size, '\0');
+    std::ifstream file(argv[1]);
+    file.read(&content[0], size);
+    file.close();
+    std::cout << ${main}(content) << "\n";
     return 0;
 }

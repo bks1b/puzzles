@@ -5,4 +5,4 @@ import { readFileSync } from 'fs';
 
 ${content}
 
-${JSON.stringify(inputs)}.map(x => console.log() || console.log(${main}(readFileSync(x, 'utf8'))));
+console.log(${main}(readFileSync(process.argv[2], 'utf8')));

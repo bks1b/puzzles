@@ -1,10 +1,7 @@
-interp
-dotnet run --property WarningLevel=0 --file ${src}
+comp
+dotnet build ${src} -o temp --self-contained --property WarningLevel=0 --verbosity q
+dotnet temp/main.dll
 
 ${content}
 
-var files = new string[] { ${JSON.stringify(inputs).slice(1, -1)} };
-foreach (var file in files) {
-    Console.Write("\n");
-    Console.WriteLine(${main}(File.ReadAllText(file)));
-}
+Console.WriteLine(${main}(File.ReadAllText(Environment.GetCommandLineArgs()[1])));
