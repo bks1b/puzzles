@@ -21,9 +21,9 @@ const run = (x, obj = {}) => new Promise((res, rej) => {
     proc.stderr.pipe(process.stderr);
     if (!obj.noPipe) proc.stdout.pipe(process.stdout);
     if (obj.stdin) proc.stdin.end(obj.stdin + (obj.stdin.endsWith('\n') ? '' : '\n'));
-    let last = '';
-    proc.stdout.on('data', d => last = d.trim() || last);
-    proc.on('close', code => code ? rej('') : res([last, Date.now() - start]));
+    let result = '';
+    proc.stdout.on('data', d => result += d);
+    proc.on('close', code => code ? rej('') : res([result, Date.now() - start]));
     obj.cb?.(proc).then(() => proc.exitCode === null && proc.kill());
 });
 
@@ -61,7 +61,8 @@ const run = (x, obj = {}) => new Promise((res, rej) => {
         }
     }
     if (!inputs.length) {
-        if (dir?.handleEmpty) resolveInput(await dir.handleEmpty(src));
+        if (dir?.handleEmpty) (await dir.handleEmpty(src)).forEach(resolveInput);
+        else if (dir?.stdin) return console.error('Input files expected.');
         else inputs.push('package.json'); // arbitrary file
     }
     const ext = src.split('.').at(-1);
@@ -99,8 +100,18 @@ const run = (x, obj = {}) => new Promise((res, rej) => {
     let result;
     for (const i of inputs) {
         const r = await run(...dir?.stdin
-            ? [toRun, { stdin: readFileSync(i, 'utf8') }]
-            : [toRun + ' "' + i + '"']);
+            ? [toRun, { stdin: readFileSync(i, 'utf8'), noPipe: flags.quiet }]
+            : [toRun + ' "' + i + '"', { noPipe: flags.quiet }]);
+        if (flags.test) {
+            const ansPath = i.replace(/\..+$/, '.ans');
+            const truncated = i.slice((process.cwd() + '/inputs/').length);
+            if (existsSync(ansPath)) {
+                const ans = readFileSync(ansPath, 'utf8');
+                console.log(`[${truncated}] ${r[0].trim() === ans.replaceAll('\r', '').trim()
+                    ? 'Success'
+                    : 'Expected output: ' + ans.trim()}`);
+            } else console.error(`[${truncated}] No output path found`);
+        }
         result = r[0];
         console.log('Executed in', r[1], '\bms');
     }

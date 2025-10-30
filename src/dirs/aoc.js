@@ -36,7 +36,7 @@ export default {
         return '../' + filename;
     },
     handleEmpty(src) {
-        return this.getInput(src, 'inp');
+        return this.getInput(src, 'inp').then(r => [r]);
     },
     handleResult: async (f, src, out) => {
         if (!f.sub) return;
