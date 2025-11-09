@@ -1,3 +1,6 @@
+#include <tuple>
+#include <functional>
+
 !include ../../util.cpp
 
 typedef std::function<long(long*)> op_f_t;
@@ -16,9 +19,9 @@ std::vector<long> intcode(std::string &text, std::vector<int> input, std::unorde
         { [](long *v) { return v[0] == v[1] ? 1 : 0; }, "write", 3 },
         { [&relative_base](long *v) { relative_base += v[0]; return 0; }, "", 1 }
     };
-    auto values = split_string<long>(text, ',', [&predef](std::string a, int i) {
-        return predef.contains(i) ? predef[i] : std::stol(a);
-    });
+    std::vector<long> values;
+    for (auto s : split_string(text, ','))
+        values.push_back(predef.contains(values.size()) ? predef[values.size()] : std::stol(s));
     std::vector<long> output;
     int j = 0;
     while (i < values.size()) {
