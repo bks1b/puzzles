@@ -115,7 +115,7 @@ const run = (x, obj = {}) => new Promise((res, rej) => {
         result = r[0];
         console.log('Executed in', r[1], '\bms');
     }
-    dir?.handleResult?.(flags, src, result);
+    dir?.handleResult?.(flags, src, result.trim());
 })().catch(console.error);
 
 const kill = () => process.platform === 'win32'

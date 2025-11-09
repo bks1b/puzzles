@@ -41,7 +41,7 @@ export default {
     handleResult: async (f, src, out) => {
         if (!f.sub) return;
         const rl = createInterface(process.stdin, process.stdout);
-        if (await rl.question(`\nAre you sure you want to submit ${out} to part ${getPart(f)}? [y/n] `) === 'y') {
+        if (await rl.question(`Are you sure you want to submit ${out} to part ${getPart(f)}? [y/n] `) === 'y') {
             const res = (await request(src, '/answer', {
                 headers: { 'content-type': 'application/x-www-form-urlencoded' },
                 body: `level=${getPart(f)}&answer=${out}`,

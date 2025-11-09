@@ -6,13 +6,8 @@ g++ ${src} -o ${o} -std=c++20
 #include <filesystem>
 
 #include <vector>
-#include <queue>
-#include <tuple>
-#include <functional>
 #include <unordered_map>
 
-#include <algorithm>
-#include <numeric>
 #include <cmath>
 
 ${content}
