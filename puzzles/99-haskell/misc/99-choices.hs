@@ -24,4 +24,4 @@ resultF words locations predef = map getAssignedWords $ getChoices possibilities
     intersections = map (\l -> (l, findSite l sitesX, findSite l sitesY)) $ filter (isIntersection locations) locations
     possibilities = map (getPossibilities words) intersections
 
-!include ./99-util.hs
+-- !include ./99-util.hs

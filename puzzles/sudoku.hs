@@ -1,4 +1,4 @@
-!include ./sudoku-util.hs
+-- !include ./sudoku-util.hs
 
 -- row, column, block of a given cell
 getConnected :: [String] -> Int -> [Int]

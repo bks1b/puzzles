@@ -1,4 +1,4 @@
-!include ./98-util.hs
+-- !include ./98-util.hs
 
 -- at least 1 zero followed by x ones, total length n
 getPartitions :: [Int] -> Int -> [[Int]]

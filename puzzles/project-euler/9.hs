@@ -1,4 +1,4 @@
-!include ../util.hs
+-- !include ../util.hs
 
 n = 1000
 

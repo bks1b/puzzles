@@ -1,4 +1,4 @@
-!include ../../sudoku.hs
+-- !include ../../sudoku.hs
 
 readGrid :: String -> [String]
 readGrid [] = []

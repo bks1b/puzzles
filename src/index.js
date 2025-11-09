@@ -5,14 +5,14 @@ import { config } from 'dotenv';
 
 config({ quiet: true });
 
-const INCLUDE = '!include ';
+const INCLUDE = /^(\/\/|--|#)\s*!include\s+/;
 const INTERACTIVE = '_test.js';
 
 const substitute = (s, o) => Object.entries(o).reduce((a, e) => a.replaceAll('${' + e[0] + '}', e[1]), s);
 
 const resolveIncludes = path => readFileSync(path, 'utf8')
     .split(/\r?\n/)
-    .map(x => x.startsWith(INCLUDE) ? resolveIncludes(resolve(path, '..', x.slice(INCLUDE.length).trim())) : x)
+    .map(x => INCLUDE.test(x) ? resolveIncludes(resolve(path, '..', x.replace(INCLUDE, ''))) : x)
     .join('\n');
 
 const run = (x, obj = {}) => new Promise((res, rej) => {
