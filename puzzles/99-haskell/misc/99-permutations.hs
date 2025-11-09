@@ -11,4 +11,4 @@ verifyPermutation sites predef locations p = (notElem False $ map (\(a, b) -> le
 resultF words locations predef = map (zip sites) $ getPermutations words (verifyPermutation sites predef locations) []
     where sites = concat $ map (\x -> map (getSite locations x) $ filter (isStart locations x) dirs) locations
 
-!include ./99-util.hs
+-- !include ./99-util.hs

@@ -1,4 +1,4 @@
-!include ../sudoku.hs
+-- !include ../sudoku.hs
 
 readAll :: [String] -> [[String]]
 readAll [] = []

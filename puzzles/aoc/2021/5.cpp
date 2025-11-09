@@ -1,4 +1,4 @@
-!include ../../util.cpp
+// !include ../../util.cpp
 
 int f(std::string &inp, bool diag) {
     std::unordered_map<std::string, int> points;

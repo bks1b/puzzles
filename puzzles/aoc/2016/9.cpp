@@ -1,7 +1,5 @@
 #include <functional>
 
-typedef long long ll;
-
 ll f(std::string str, std::function<ll(int, int)> cb) {
     ll len = str.size();
     for (int i = 0; i < str.size(); i++) {

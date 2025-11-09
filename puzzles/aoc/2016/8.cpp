@@ -1,6 +1,4 @@
-typedef long long ll;
-
-!include ../../util.cpp
+// !include ../../util.cpp
 
 const int W = 50;
 const int H = 6;

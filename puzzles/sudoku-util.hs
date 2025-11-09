@@ -1,4 +1,4 @@
-!include ./util.hs
+-- !include ./util.hs
 
 values = map show [1..9]
 

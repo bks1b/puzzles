@@ -1,6 +1,4 @@
-typedef long long ll;
-
-!include ../../util.cpp
+// !include ../../util.cpp
 
 ll get_interval(ll time, ll dist) {
     double d = std::sqrt(time * time - 4 * dist);

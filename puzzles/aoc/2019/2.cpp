@@ -1,4 +1,4 @@
-!include ./intcode.cpp
+// !include ./intcode.cpp
 
 long part1(std::string &inp) {
     return intcode(inp, {}, { { 1, 12 }, { 2, 2 } }, true)[0];
