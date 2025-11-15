@@ -8,17 +8,17 @@ int main() {
         std::string str;
         std::cin >> str;
         std::unordered_map<char, int> counts;
-        char firstMax = str[0];
-        char secondMax = 0;
+        char first_max = str[0];
+        char second_max = 0;
         for (char c : str) {
             counts[c]++;
-            if (c == firstMax) continue;
-            if (counts[c] >= counts[firstMax]) {
-                secondMax = firstMax;
-                firstMax = c;
-            } else if (!secondMax || counts[c] > counts[secondMax]) secondMax = c;
+            if (c == first_max) continue;
+            if (counts[c] >= counts[first_max]) {
+                second_max = first_max;
+                first_max = c;
+            } else if (!second_max || counts[c] > counts[second_max]) second_max = c;
         }
-        std::cout << str.size() - counts[firstMax] - (secondMax ? counts[secondMax] : 0) << "\n";
+        std::cout << str.size() - counts[first_max] - (second_max ? counts[second_max] : 0) << "\n";
     }
     return 0;
 }
