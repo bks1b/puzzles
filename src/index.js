@@ -15,16 +15,15 @@ const resolveIncludes = path => readFileSync(path, 'utf8')
     .map(x => INCLUDE.test(x) ? resolveIncludes(resolve(path, '..', x.replace(INCLUDE, ''))) : x)
     .join('\n');
 
-const run = (x, obj = {}) => new Promise((res, rej) => {
+const run = (x, noPipe, cb) => new Promise((res, rej) => {
     const start = Date.now();
-    const proc = exec(x);
+    const proc = exec(x, { maxBuffer: Infinity });
     proc.stderr.pipe(process.stderr);
-    if (!obj.noPipe) proc.stdout.pipe(process.stdout);
-    if (obj.stdin) proc.stdin.end(obj.stdin + (obj.stdin.endsWith('\n') ? '' : '\n'));
+    if (!noPipe) proc.stdout.pipe(process.stdout);
     let result = '';
     proc.stdout.on('data', d => result += d);
     proc.on('close', code => code ? rej('') : res([result, Date.now() - start]));
-    obj.cb?.(proc).then(() => proc.exitCode === null && proc.kill());
+    cb?.(proc).then(() => proc.exitCode === null && proc.kill());
 });
 
 (async () => {
@@ -84,35 +83,33 @@ const run = (x, obj = {}) => new Promise((res, rej) => {
     }));
     if (type === 'comp') console.error('Compiled in', (await run(cmd))[1], '\bms');
     if (interactive) {
-        const runTest = (cb, noPipe) => run(toRun, {
-            noPipe,
-            cb: proc => cb(
-                () => new Promise(r => proc.stdout.once('data', d => r(d.trim()))),
-                d => {
-                    if (!noPipe) process.stdout.write(d);
-                    proc.stdin.write(d);
-                },
-            ),
-        });
+        const runTest = (cb, noPipe) => run(toRun, noPipe, proc => cb(
+            () => new Promise(r => proc.stdout.once('data', d => r(d.trim()))),
+            d => {
+                if (!noPipe) process.stdout.write(d);
+                proc.stdin.write(d);
+            },
+        ));
         eval(`${runTest};(async()=>{${readFileSync('puzzles/' + src + INTERACTIVE, 'utf8')}})();`);
         return;
     }
     let result;
     for (const i of inputs) {
-        const r = await run(...dir?.stdin
-            ? [toRun, { stdin: readFileSync(i, 'utf8'), noPipe: flags.quiet }]
-            : [toRun + ' "' + i + '"', { noPipe: flags.quiet }]);
+        const r = await run(toRun + (dir?.stdin ? ' < ' + i : ' "' + i + '"'), flags.quiet);
+        result = r[0].trim();
+        if (!flags.quiet && !r[0].endsWith('\n')) console.log();
         if (flags.test) {
             const ansPath = i.replace(/\..+$/, '.ans');
             const truncated = i.slice((process.cwd() + '/inputs/').length);
             if (existsSync(ansPath)) {
-                const ans = readFileSync(ansPath, 'utf8');
-                console.log(`[${truncated}] ${r[0].trim() === ans.replaceAll('\r', '').trim()
+                const ans = readFileSync(ansPath, 'utf8').replaceAll('\r', '').trim();
+                console.log(`[${truncated}] ${result === ans
                     ? 'Success'
-                    : 'Expected output: ' + ans.trim()}`);
-            } else console.error(`[${truncated}] No output path found`);
+                    : flags.quiet
+                        ? 'Wrong output'
+                        : 'Expected output:\n' + ans}`);
+            } else console.error(`[${truncated}] Output path not found`);
         }
-        result = r[0];
         console.log('Executed in', r[1], '\bms');
     }
     dir?.handleResult?.(flags, src, result.trim());
