@@ -59,11 +59,6 @@ const run = (x, noPipe, cb) => new Promise((res, rej) => {
             }
         }
     }
-    if (!inputs.length) {
-        if (dir?.handleEmpty) (await dir.handleEmpty(src)).forEach(resolveInput);
-        else if (dir?.stdin) return console.error('Input files expected.');
-        else inputs.push('package.json'); // arbitrary file
-    }
     const ext = src.split('.').at(-1);
     let [type, cmd, ...content] = readFileSync(`src/languages/${ext}.txt`, 'utf8').split(/\r?\n/);
     cmd = substitute(cmd, {
@@ -83,15 +78,20 @@ const run = (x, noPipe, cb) => new Promise((res, rej) => {
     }));
     if (type === 'comp') console.error('Compiled in', (await run(cmd))[1], '\bms');
     if (interactive) {
-        const runTest = (cb, noPipe) => run(toRun, noPipe, proc => cb(
+        const runTest = cb => run(toRun, flags.quiet, proc => cb(
             () => new Promise(r => proc.stdout.once('data', d => r(d.trim()))),
             d => {
-                if (!noPipe) process.stdout.write(d);
+                if (!flags.quiet) process.stdout.write(d);
                 proc.stdin.write(d);
             },
         ));
         eval(`${runTest};(async()=>{${readFileSync('puzzles/' + src + INTERACTIVE, 'utf8')}})();`);
         return;
+    }
+    if (!inputs.length) {
+        if (dir?.handleEmpty) (await dir.handleEmpty(src)).forEach(resolveInput);
+        else if (dir?.stdin) return console.error('Input files expected.');
+        else inputs.push('package.json'); // arbitrary file
     }
     let result;
     for (const i of inputs) {

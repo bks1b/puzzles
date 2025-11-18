@@ -14,4 +14,4 @@ for (const n of [0n, MAX, ...Array.from(
             write((n + BigInt(x) + '').split('').reduce((a, b) => a + (+b), 0) + '\n');
         }
         console.log('too many queries');
-    }, true);
+    });
