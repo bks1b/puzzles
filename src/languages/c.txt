@@ -1,0 +1,16 @@
+comp
+gcc ${src} -o ${o}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
+${content}
+
+int main(int, char **argv) {
+    FILE *file = fopen(argv[1], "r");
+    ${main}(file);
+    fclose(file);
+    return 0;
+}
