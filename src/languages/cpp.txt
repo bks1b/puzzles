@@ -16,6 +16,7 @@ typedef unsigned long long ull;
 ${content}
 
 int main(int, char **argv) {
+    std::ios_base::sync_with_stdio(false);
     std::cout.setf(std::ios_base::unitbuf);
     auto size = std::filesystem::file_size(argv[1]);
     std::string content(size, '\0');

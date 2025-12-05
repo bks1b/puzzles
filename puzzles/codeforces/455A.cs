@@ -1,5 +1,5 @@
 Console.ReadLine();
-int[] nums = Console.ReadLine().Split().Select(int.Parse).Order().ToArray();
+int[] nums = Console.ReadLine()!.Split().Select(int.Parse).Order().ToArray();
 int count = 1;
 ulong prevScore = 0;
 ulong score = 0;

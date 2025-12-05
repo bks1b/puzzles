@@ -1,21 +1,11 @@
-Console.ReadLine();
-var data = Console.ReadLine()!.Split(' ').Select(int.Parse).ToArray();
-int diff = 0;
-var dict = new Dictionary<int, int>();
-foreach (int x in data) {
-    if (dict.ContainsKey(x)) dict[x]++;
-    else dict.Add(x, 1);
-}
-foreach (int k in dict.Keys.ToList()) {
-    while (dict[k] > 1) {
-        dict[k]--;
-        int key = k;
-        while (dict.ContainsKey(key) && dict[key] > 0) {
-            key++;
-            diff++;
-        }
-        if (dict.ContainsKey(key)) dict[key]++;
-        else dict.Add(key, 1);
-    }
-}
-Console.WriteLine(diff);
+Console.ReadLine()!;
+var nums = Console.ReadLine()!.Split().Select(int.Parse).OrderDescending().ToArray();
+int incr = 0;
+int i = 0;
+while (i < nums.Length - 1)
+    if (nums[i] == nums[i + 1]) {
+        nums[i]++;
+        incr++;
+        if (i > 0) i--;
+    } else i++;
+Console.WriteLine(incr);
