@@ -71,7 +71,8 @@ const run = (x, noPipe, cb) => new Promise((res, rej) => {
             : '.\\temp\\o.exe'
         : cmd;
 
-    const resolved = resolveIncludes('puzzles/' + src);
+    let resolved = resolveIncludes('puzzles/' + src);
+    if (dir?.handleContent) resolved = dir.handleContent(resolved, src.split('.').at(-1));
     writeFileSync('temp/main.' + ext, dir?.stdin ? resolved : substitute(content.join('\n'), {
         main: dir?.mainName?.(flags) || 'result',
         content: resolved,

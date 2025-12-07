@@ -1,7 +1,6 @@
-f :: Bool -> Int -> Int -> String -> Int
-f False i n x | i == length x = n
-f True i (-1) _ = i
-f b i n x = f b (i + 1) (if (x !! i) == '(' then n + 1 else n - 1) x
+f :: Int -> Int -> Bool -> String -> Int
+f _ n False [] = n
+f i (-1) True _ = i
+f i n p2 (x : xs) = f (i + 1) (if x == '(' then n + 1 else n - 1) p2 xs
 
-part1 = show . f False 0 0
-part2 = show . f True 0 0
+solve = (show .) . f 0 0

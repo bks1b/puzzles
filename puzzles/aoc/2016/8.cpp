@@ -17,13 +17,14 @@ bool *access(bool (*screen)[H], bool row, int a, int b) {
     return row ? screen[a] + b : screen[b] + a;
 }
 
-int f(bool (*screen)[H], std::string &inp) {
+int get_screen(bool (*screen)[H], std::string &inp) {
     int lit = 0;
-    for (auto line : split_string(inp, '\n')) {
+    for (auto &line : split_string(inp, '\n')) {
         auto instr = split_string(line, ' ');
         if (instr[0] == "rect") {
             std::vector<int> dim;
-            for (auto s : split_string(instr[1], 'x')) dim.push_back(std::stoi(s));
+            for (auto &s : split_string(instr[1], 'x'))
+                dim.push_back(std::stoi(s));
             for (int i = 0; i < dim[0]; i++)
                 for (int j = 0; j < dim[1]; j++)
                     if (!screen[i][j]) {
@@ -52,12 +53,12 @@ int f(bool (*screen)[H], std::string &inp) {
 
 int part1(std::string &inp) {
     bool screen[W][H] = {};
-    return f(screen, inp);
+    return get_screen(screen, inp);
 }
 
 std::string part2(std::string &inp) {
     bool screen[W][H] = {};
-    f(screen, inp);
+    get_screen(screen, inp);
     std::string res;
     for (int x = 0; x < W; x += T) {
         ll r = 0;

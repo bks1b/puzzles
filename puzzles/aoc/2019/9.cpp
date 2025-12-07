@@ -1,9 +1,5 @@
 // !include ./intcode.cpp
 
-long part1(std::string &inp) {
-    return intcode(inp, { 1 })[0];
-}
-
-long part2(std::string &inp) {
-    return intcode(inp, { 2 })[0];
+long solve(std::string &inp, bool p2) {
+    return intcode(inp, { p2 + 1 })[0];
 }

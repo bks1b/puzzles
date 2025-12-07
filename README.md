@@ -20,7 +20,7 @@ This is useful for sharing functions between different files.
 
 ## Advent of Code
 
-Files are expected to have functions called `part1` and `part2`, and paths are expected to match `aoc/<year>/<day>[description].<ext>`.
+Files are expected to have `part1,part2(inp: string)` functions or a `solve(inp: string, part2: bool)` function, and paths are expected to match `aoc/<year>/<day>[description].<ext>`.
 An `AOC_TOKEN` entry is expected in `.env` to access puzzle inputs and part 2 descriptions, and submit solutions.
 - The `-p` flag determines which part is used (`-p=1` by default, or `-p=2`)
 - The `--sub` flag submits the result

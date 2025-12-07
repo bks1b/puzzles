@@ -62,11 +62,3 @@ void solve(FILE *inp, bool p2) {
     } while (last_char != EOF);
     printf("%d\n", sum);
 }
-
-void part1(FILE *inp) {
-    return solve(inp, false);
-}
-
-void part2(FILE *inp) {
-    return solve(inp, true);
-}
