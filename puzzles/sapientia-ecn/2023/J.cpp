@@ -28,6 +28,7 @@ int main() {
     while (n--)
         if (groups[arr[n].dna].size() < 3)
             groups[arr[n].dna].insert(arr[n]);
+    delete[] arr;
     auto cmp = [](const std::set<Person> &a, const std::set<Person> &b) {
         return a.begin()->id < b.begin()->id;
     };

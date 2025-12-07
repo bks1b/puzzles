@@ -28,9 +28,12 @@ int main() {
         for (int j = 0; j < m; j++) img[i][j] = r[j] == '#';
     }
     int count = 0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++)
             if (is_diamond(img, n, m, i, j)) count++;
+        delete[] img[i];
+    }
+    delete[] img;
     std::cout << count << "\n";
     return 0;
 }

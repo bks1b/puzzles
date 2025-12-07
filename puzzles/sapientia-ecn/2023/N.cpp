@@ -47,7 +47,11 @@ int main() {
         for (int j = 0; j < c; j++)
             delete[] memo[i][j];
         delete[] memo[i];
+        delete[] grid[i];
+        delete[] pass[i];
     }
     delete[] memo;
+    delete[] grid;
+    delete[] pass;
     return 0;
 }
