@@ -61,11 +61,3 @@ void solve(FILE *inp, bool p2) {
     free(has_won);
     printf("%d\n", score);
 }
-
-void part1(FILE *file) {
-    solve(file, false);
-}
-
-void part2(FILE *file) {
-    solve(file, true);
-}

@@ -18,7 +18,7 @@ std::vector<long> intcode(std::string &text, std::vector<int> input, std::unorde
         { [&relative_base](long *v) { relative_base += v[0]; return 0; }, "", 1 }
     };
     std::vector<long> values;
-    for (auto s : split_string(text, ','))
+    for (auto &s : split_string(text, ','))
         values.push_back(predef.contains(values.size()) ? predef[values.size()] : std::stol(s));
     std::vector<long> output;
     int j = 0;

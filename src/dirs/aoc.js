@@ -1,6 +1,17 @@
 import { existsSync, writeFileSync, mkdirSync } from 'fs';
 import { createInterface } from 'readline/promises';
 
+const FN = 'solve';
+const DEFAULT_CODE = {
+    'cpp': (n, b) => `auto part${n}(std::string &inp) { return ${FN}(inp, ${b}); }`,
+    'c': (n, b) => `void part${n}(FILE *file) { ${FN}(file, ${b}); }`,
+    'cs': (n, b, t) => `${t} part${n}(string inp) { return ${FN}(inp, ${b}); }`,
+    'hs': (n, b) => `part${n} = ${FN} ${upper(b)}`,
+    'js': (n, b) => `const part${n} = x => ${FN}(x, ${b});`,
+    'py': (n, b) => `part${n} = lambda x: ${FN}(x, ${upper(b)})`,
+};
+
+const upper = s => s[0].toUpperCase() + s.slice(1);
 const splitPath = src => {
     const r = src.split(/[\/\\]/).slice(1).map(x => parseInt(x.match(/^(\d+)/)?.[0]));
     if (!r[0] || !r[1]) throw 'Invalid AOC path.';
@@ -38,6 +49,12 @@ export default {
     handleEmpty(src) {
         return this.getInput(src, 'inp').then(r => [r]);
     },
+    handleContent: (src, ext) => /\W?part[12]\W?/.test(src)
+        ? src
+        : src + '\n\n' + (DEFAULT_CODE[ext] ? [1, 2].map(i => DEFAULT_CODE[ext](
+            i,
+            (i > 1) + '',
+            src.match(new RegExp(`^(.+?) ${FN}\\(`))?.[1] || '')).join('\n') : ''),
     handleResult: async (f, src, out) => {
         if (!f.sub) return;
         const rl = createInterface(process.stdin, process.stdout);
