@@ -37,6 +37,7 @@ int main() {
         << dist(points[n - 2], points[n - 1]) + min_from(0, 0, points, memo) << "\n";
     for (int i = 0; i < n - 1; i++) delete[] memo[i];
     delete[] memo;
+    delete[] points;
     return 0;
 }
 
