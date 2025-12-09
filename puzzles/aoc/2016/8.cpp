@@ -1,17 +1,7 @@
 // !include ../../util.cpp
+// !include ../chars.cpp
 
 const int W = 50;
-const int H = 6;
-const int T = 5;
-const std::unordered_map<ll, char> CHARS = {
-    { 210797862ll, 'C' },
-    { 34642991ll, 'F' },
-    { 504398881ll, 'L' },
-    { 504405039ll, 'E' },
-    { 211068198ll, 'O' },
-    { 138553905ll, 'Y' },
-    { 243467310ll, 'S' }
-};
 
 bool *access(bool (*screen)[H], bool row, int a, int b) {
     return row ? screen[a] + b : screen[b] + a;
@@ -59,13 +49,7 @@ int part1(std::string &inp) {
 std::string part2(std::string &inp) {
     bool screen[W][H] = {};
     get_screen(screen, inp);
-    std::string res;
-    for (int x = 0; x < W; x += T) {
-        ll r = 0;
-        for (int y = 0; y < H; y++)
-            for (int dx = 0; dx < T; dx++)
-                r |= screen[x + dx][y] << (y * T + dx);
-        res += CHARS.find(r)->second;
-    }
-    return res;
+    return get_str(W / CHAR_W, [screen](int x, int y) {
+        return screen[x][y];
+    });
 }
