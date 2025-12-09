@@ -1,9 +1,6 @@
-// !include ./intcode.cpp
+// !include ./Intcode.cpp
 
-long part1(std::string &inp) {
-    return intcode(inp, { 1 }).back();
-}
-
-long part2(std::string &inp) {
-    return intcode(inp, { 5 })[0];
+int solve(std::string &inp, bool p2) {
+    Intcode c(inp, { 1 + 4 * p2 });
+    return c.step().back();
 }
