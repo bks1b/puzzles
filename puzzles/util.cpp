@@ -9,10 +9,10 @@ std::vector<std::string> split_string(std::string s, char c) {
     return res;
 }
 
-std::vector<int> match_ints(std::string &str) {
+std::vector<int> match_ints(std::string &s) {
     std::regex r("\\d+");
     std::vector<int> res;
-    for (auto it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it)
+    for (auto it = std::sregex_iterator(s.begin(), s.end(), r); it != std::sregex_iterator(); ++it)
         res.push_back(std::stoi(it->str()));
     return res;
 }
