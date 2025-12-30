@@ -1,9 +1,7 @@
+n = 1000
+
 carryDigits :: [Int] -> [Int]
-carryDigits [] = []
-carryDigits (x : xs) = if x > 9 then x - 10 : carryDigits (if length xs > 0 then head xs + 1 : tail xs else [1]) else x : carryDigits xs
+carryDigits a@[x] = if x > 9 then [mod x 10, div x 10] else a
+carryDigits (x : xs) = mod x 10 : carryDigits (head xs + div x 10 : tail xs)
 
-getExpDigits :: Int -> [Int]
-getExpDigits 1 = [2]
-getExpDigits n = carryDigits $ map (2 *) $ getExpDigits (n - 1)
-
-result _ = show $ sum $ getExpDigits 1000
+result _ = show $ sum $ (!! n) $ iterate (carryDigits . map (2 *)) [1]

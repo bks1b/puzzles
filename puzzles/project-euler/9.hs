@@ -7,7 +7,8 @@ f c d = if isSquare d
     then div (c * n * n) 2 - c * c * n
     else f (c + 1) (d + 2 * (c + n) + 1)
 
-result _ = show $ f c (c * c + 2 * n * c - n * n) where c = floor $ (fromIntegral n) * (sqrt (fromIntegral 2) - (fromIntegral 1))
+result _ = show $ f c (c * c + 2 * n * c - n * n)
+    where c = floor $ fromIntegral n * (sqrt 2 - 1)
 
 {-
 <math>

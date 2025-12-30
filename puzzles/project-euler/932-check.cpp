@@ -1,8 +1,8 @@
-const long n = std::pow(10, 16);
+const ll N = std::pow(10, 16);
 
-long result(std::string _) {
-    long sum = 0;
-    for (long i = 1, j = 1; j < n; i++, j += 2 * i - 1) {
+ll result(std::string _) {
+    ll sum = 0;
+    for (ll i = 1, j = 1; j < N; i++, j += 2 * i - 1) {
         if (i % 9 > 1) continue;
         int len = std::log10(j) + 1;
         for (int k = std::ceil(len / 2.) - 1, l = std::pow(10, k); k < std::ceil(len / 2.) + 1 && k < len; k++, l *= 10) {

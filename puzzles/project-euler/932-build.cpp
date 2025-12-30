@@ -1,15 +1,15 @@
-const int n = 16;
+const int N = 16;
 
-long result(std::string _) {
-    long sum = 0;
-    for (long b = 0;; b++) {
+ll result(std::string _) {
+    ll sum = 0;
+    for (ll b = 0;; b++) {
         int k = int(std::log10(b)) + 1;
-        if (k > n / 2) return sum;
-        long p = std::pow(10, k);
+        if (k > N / 2) return sum;
+        ll p = std::pow(10, k);
         double d = std::sqrt(p * p + 4 * b * (1 - p));
-        if (d != long(d)) continue;
+        if (d != ll(d)) continue;
         for (int c = -1; c < 2; c += 2) {
-            long r = (p - 2 * b + d * c) / 2 * p + b;
+            ll r = (p - 2 * b + d * c) / 2 * p + b;
             if (r > 1) sum += r;
         }
     }
