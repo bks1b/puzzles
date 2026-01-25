@@ -8,4 +8,4 @@ modExp b e = if mod e 2 > 0
     else r
     where r = modExp (mod (b * b) m) (div e 2)
 
-result _ = show $ foldl (\a k -> mod (a + modExp k k) m) 0 [1..n]
+result _ = show $ foldl' ((. join modExp) . (flip mod m .) . (+)) 0 [1..n]

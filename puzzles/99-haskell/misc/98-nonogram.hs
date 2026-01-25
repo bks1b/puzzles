@@ -1,49 +1,48 @@
 -- !include ./98-util.hs
 
 -- at least 1 zero followed by x ones, total length n
-getPartitions :: [Int] -> Int -> [[Int]]
-getPartitions [] n = [replicate n 0]
-getPartitions (x : xs) n = concat [map ((replicate i 0 ++ replicate x 1) ++) $ getPartitions xs (n - x - i) | i <- [1..n - x]]
+partitions :: [Int] -> Int -> [[Int]]
+partitions (x : xs) n = concatMap (\i -> map ((replicate i 0 ++) . (replicate x 1 ++)) $ partitions xs (n - x - i)) [1..n - x]
+partitions _ n = [replicate n 0]
 
 -- remove possibilities which no longer match the grid
 filterConstraints :: Game -> Game
 filterConstraints game = game {
     constraints = map (\c -> c {
-        possibilities = filter (\p -> all (\(a, b) -> b < 0 || a == b) $ zip p $ getConstraintTarget game c) $ possibilities c
+        possibilities = filter (\p -> all (\(a, b) -> b < 0 || a == b) $ zip p $ constraintTarget game c) $ possibilities c
     }) $ constraints game
 }
 
 -- fill cells which only have 1 possible value according to a constraint
-fillCertain :: Game -> Game
-fillCertain game = foldl (\g (c, i) -> setCell g ((cFlip c cellIdx) g i $ idx c) $ (possibilities c) !! 0 !! i) game
-    $ concat
-    $ map (\c -> map (c, )
-    $ filter (\i -> (length $ nub $ map (!! i) $ possibilities c) == 1) [0..(cFlip c size) game False True])
+fillCertain :: Game -> (Int, Game)
+fillCertain game = foldr (\(c, (i, v)) -> (***) (+ 1) $ flip (setCell $ idxBy (snd $ size game) $ swapIf c (i, idx c)) v) (0, game)
+    $ concatMap (\c -> map ((c,) . fmap (head . head))
+        $ filter (lengthEq 1 . nub . map head . snd)
+        $ zip [0..snd (swapIf c $ size game) - 1]
+        $ iterate (map tail) $ possibilities c)
     $ constraints game
 
--- [] if unsolvable, [result] if solved, otherwise deduce or brute force then recurse
 solve :: Game -> [Game]
-solve game = if any (\c -> length (possibilities c) < 1) $ constraints changed
+solve game = if any (null . possibilities) $ constraints changed
     then []
-    else if isNothing firstUncertain
-        then [changed]
-        else if game == changed
-            then concat $ map (solve . setCell changed (fromJust firstUncertain)) [0, 1]
+    else case elemIndex (-1) $ grid changed of
+        Just unknown -> if changes == 0
+            then concatMap (solve . setCell unknown changed) [0, 1]
             else solve changed
-    where
-        changed = fillCertain $ filterConstraints game
-        firstUncertain = elemIndex (-1) $ grid changed
+        _ -> [changed]
+    where (changes, changed) = fillCertain $ filterConstraints game
 
 createGame :: [[[Int]]] -> Game
 createGame [rows, cols] = Game {
     rows = rows,
     cols = cols,
-    grid = replicate (length cols * length rows) (-1),
-    constraints = concat $ map (\c -> let a = if c then cols else rows in [Constraint {
+    grid = replicate (uncurry (*) len) (-1),
+    size = len,
+    constraints = concatMap (\(c, a) -> zipWith (\v i -> Constraint {
         idx = i,
         isCol = c,
-        possibilities = map tail $ getPartitions (a !! i) $ (length $ if c then rows else cols) + 1
-    } | i <- [0..length a - 1]]) [False, True]
-}
+        possibilities = map tail $ partitions v $ (if c then fst else snd) len + 1
+    }) a [0..]) [(False, rows), (True, cols)]
+} where len = (length rows, length cols)
 
-result = init . init . concat . map (\g -> show g ++ "\n\n") . solve . createGame . read
+result = intercalate "\n\n\n" . map show . solve . createGame . read

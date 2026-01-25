@@ -1,14 +1,17 @@
--- efficiently filters permutations
-getPermutations :: Eq a => [a] -> ([a] -> Bool) -> [a] -> [[a]]
-getPermutations [] f r = [r]
-getPermutations a f r = concat $ map (\x -> if f $ r ++ [x] then getPermutations (filter (/= x) a) f $ r ++ [x] else []) a
+holes :: [a] -> [(a, [a])]
+holes = map (uncurry $ (. fromJust . uncons) . fmap . (++)) . init . splits
 
--- every word is in a site which matches its length, and every location is assigned at most 1 char
-verifyPermutation :: [[[Int]]] -> Positions -> [[Int]] -> [String] -> Bool
-verifyPermutation sites predef locations p = (notElem False $ map (\(a, b) -> length a == length b) $ zip sites p) && allUnique positions locations
-    where positions = predef ++ (getPositions $ zip sites p)
+perms :: [a] -> ([(a, b)] -> Bool) -> [(a, b)] -> [b] -> [[(a, b)]]
+perms (x : xs) f r = concatMap (uncurry $ ap (bool (const []) . perms xs f) f . (: r) . (x,)) . holes
+perms _ _ r = const [r]
 
-resultF words locations predef = map (zip sites) $ getPermutations words (verifyPermutation sites predef locations) []
-    where sites = concat $ map (\x -> map (getSite locations x) $ filter (isStart locations x) dirs) locations
+-- every word is in a site which matches its length, and every location is assigned to at most 1 char
+verifyPermutation :: Positions -> Words -> Bool
+verifyPermutation predef ls = all (uncurry eqLength) ls && allUnique fst (predef ++ positions ls)
+
+resultF locations predef = perms
+    (concatMap (\x -> map (site locations x) $ filter (isStart locations x) dirs) locations)
+    (verifyPermutation predef)
+    []
 
 -- !include ./99-util.hs

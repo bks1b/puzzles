@@ -1,7 +1,7 @@
 n = 1000
 
 multiplesBelow :: Int -> Int -> Int
-multiplesBelow n k = k * (((n - 1) `div` k) * ((n - 1) `div` k + 1)) `div` 2
+multiplesBelow n k = k * div (div (n - 1) k * (div (n - 1) k + 1)) 2
 
 result _ = show $ multiplesBelow n 3 + multiplesBelow n 5 - multiplesBelow n 15
 

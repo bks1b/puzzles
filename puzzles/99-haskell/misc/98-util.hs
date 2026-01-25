@@ -1,46 +1,42 @@
+-- !include ../../util.hs
+
 data Constraint = Constraint {
     idx :: Int,
     isCol :: Bool,
     possibilities :: [[Int]]
-} deriving Eq
+}
 
 data Game = Game {
     rows :: [[Int]],
     cols :: [[Int]],
+    size :: (Int, Int),
     grid :: [Int],
     constraints :: [Constraint]
-} deriving Eq
+}
 
 instance Show Game where
-    show game = init $ concat (
-        [
-            -- cells and inputs of each row
-            "|"
-            ++ concat [(if (grid game) !! (cellIdx game x y) > 0 then "X" else "_") ++ "|" | x <- [0..size game False True]]
-            ++ concat (map (\r -> " " ++ show r) $ (rows game) !! y) ++ "\n"
-            | y <- [0..size game True False]
-        ] ++ [
-            -- inputs of each column
-            " "
-            ++ (concat $ map (\c -> (if j < length c then show $ c !! j else " ") ++ " ") $ cols game)
-            ++ "\n"
-            | j <- [0..(maximum $ map length $ cols game) - 1]
-        ])
+    show game = intercalate "\n" $ (++)
+        -- cells and inputs of each row
+        (zipWith ((. map (bool "_|" "X|" . (> 0)) . take (snd $ size game))
+            . ((.) $ ('|' :) . concat)
+            . flip (++) . map ((' ' :) . show))
+            (rows game)
+            $ iterate (drop $ snd $ size game)
+            $ grid game)
+        -- inputs of each column
+        (map (concatMap $ (' ' :) . fromMaybe " " . fmap (show . fst) . uncons)
+            $ takeWhile (any $ not . null)
+            $ iterate (map $ drop 1)
+            $ cols game)
 
-cFlip :: Constraint -> (Game -> a -> a -> b) -> (Game -> a -> a -> b)
-cFlip c f = (if isCol c then flip else id) . f
+swapIf :: Constraint -> (a, a) -> (a, a)
+swapIf = bool id swap . isCol
 
-size :: Game -> Bool -> Bool -> Int
-size game r _ = (length $ (if r then rows else cols) game) - 1
+constraintTarget :: Game -> Constraint -> [Int]
+constraintTarget game c = if isCol c
+    then unfoldr (\g -> if null g then Nothing else Just (g !! idx c, drop colSize g)) $ grid game
+    else take colSize $ drop (idx c * colSize) $ grid game
+    where colSize = snd $ size game
 
-cellIdx :: Game -> Int -> Int -> Int
-cellIdx game x y = x + y * (length $ cols game)
-
--- row or column
-getConstraintTarget :: Game -> Constraint -> [Int]
-getConstraintTarget game c = [(grid game) !! ((cFlip c cellIdx) game i (idx c)) | i <- [0..(cFlip c size) game False True]]
-
-setCell :: Game -> Int -> Int -> Game
-setCell game i v = game {
-    grid = [if j == i then v else (grid game) !! j | j <- [0..length (grid game) - 1]]
-}
+setCell :: Int -> Game -> Int -> Game
+setCell i game v = game { grid = setAt i v $ grid game }

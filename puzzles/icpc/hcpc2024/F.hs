@@ -1,36 +1,30 @@
+{-# LANGUAGE LambdaCase #-}
+
 import Data.List
 import Data.Maybe
+import Control.Monad
 
 n = 3
 
-diagonal 1 = diagonal 0 . reverse
-diagonal 0 = map (uncurry (!!)) . flip zip [0..]
+diagonal = zipWith (flip (!!)) [0..]
 
-getRowState :: [Int] -> Maybe Int
-getRowState x = case nub x of
-    [y] | y > 0 -> Just y
-    _ -> Nothing
+rowState :: [Int] -> Maybe Int
+rowState = (\case [y] | y > 0 -> Just y; _ -> Nothing) . nub
 
-getState :: [[Int]] -> Int
-getState x = case listToMaybe $ catMaybes states of
-    Just n -> n
-    Nothing -> if elem (-1) $ concat x then -1 else 0
-    where
-        states = concat [
-            map (getRowState . flip diagonal x) [0, 1],
-            map getRowState x,
-            map getRowState (transpose x)]
+state :: [[Int]] -> Int
+state x = fromMaybe (fromMaybe 0 $ find (== -1) $ concat x) $ join $ find isJust states where
+    states = map (rowState . diagonal) [x, reverse x] ++ concatMap (map rowState) [x, transpose x]
 
 split :: [a] -> [[a]]
 split [] = []
-split x = take n x : split (drop n x)
+split x = uncurry (:) . fmap split . splitAt n $ x
 
 -- gets read in reverse because of (:), which is fine because of symmetry
-groupVertically = foldl (curry $ map (uncurry $ flip (:)) . uncurry zip) (replicate n [])
-getCell = (+ (-1)) . fromJust . flip elemIndex "._OX"
-getBoard = map (groupVertically . map (map (map (getCell)) . split)) . split
+groupVertically = foldl' (zipWith $ flip (:)) $ replicate n []
+cell = subtract 1 . fromJust . flip elemIndex "._OX"
+board = (. split) $ map $ groupVertically . map (map (map cell) . split)
 
 main :: IO ()
-main = (sequence $ replicate (n * n) getLine) >>= (
-    putStrLn . (["UNFINISHED", "DRAW", "OLGA", "XENIYA"] !!) . (+ 1)
-    . getState . map (map getState) . getBoard)
+main = sequence (replicate (n * n) getLine) >>= 
+    putStrLn . (["UNFINISHED", "DRAW", "OLGA", "XENIYA"] !!)
+    . (+ 1) . state . map (map state) . board

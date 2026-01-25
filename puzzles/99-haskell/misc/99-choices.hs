@@ -1,27 +1,30 @@
-type Intersection = ([Int], [[Int]], [[Int]])
+type Intersection = (Pos, [[Pos]])
 type Possibilities = [(String, String, Intersection)]
 
 -- efficiently filters choice functions
-getChoices :: [[a]] -> ([a] -> Bool) -> [a] -> [[a]]
-getChoices [] f r = [r]
-getChoices (x : xs) f r = concat $ map (\y -> if f $ r ++ [y] then getChoices xs f $ r ++ [y] else []) x
+choices :: [[a]] -> ([a] -> Bool) -> [[a]] -> [[a]]
+choices (x : xs) f = choices xs f . filter f . concatMap (\y -> map (: y) x)
+choices _ _ = id
 
 -- pairs of words which are possible at a given intersection
-getPossibilities :: [String] -> Intersection -> Possibilities
-getPossibilities words i@(l, s1, s2) = filter (\(a, b, _) -> length a == len1 && length b == len2 && a !! pos1 == b !! pos2) $ [(w1, w2, i) | w1 <- words, w2 <- words]
-    where [(len1, pos1), (len2, pos2)] = map (\s -> (length s, sumDir $ addDir (-1) l (s !! 0))) [s1, s2]
+possibilities :: [String] -> Intersection -> Possibilities
+possibilities words i@(l, s) = concatMap (\w1 -> map (w1,, i) $ filter ((w1 !! i1 ==) . (!! i2)) m2) m1 where
+    -- index of intersection in each word
+    [i1, i2] = map (uncurry (+) . addPos (-1) l . head) s
+    [m1, m2] = map (flip filter words . eqLength) s
 
-getAssignedWords :: Possibilities -> Words
-getAssignedWords = concat . map (\(w1, w2, (_, s1, s2)) -> [(s1, w1), (s2, w2)])
+assignedWords :: Possibilities -> Words
+assignedWords = concatMap (\(w1, w2, (_, s)) -> zip s [w1, w2])
 
--- every location is assigned at most 1 char, and every word is assigned at most to 1 site
-verifyChoice :: [[Int]] -> Positions -> [String] -> Possibilities -> Bool
-verifyChoice locations predef words choice = allUnique (predef ++ (getPositions assigned)) locations && allUnique (map swap assigned) words
-    where assigned = getAssignedWords choice
+-- every word is assigned to at most 1 site, and every location is assigned to at most 1 char
+verifyChoice :: Positions -> Words -> Bool
+verifyChoice predef ls = allUnique snd ls && allUnique fst (predef ++ positions ls)
 
-resultF words locations predef = map getAssignedWords $ getChoices possibilities (verifyChoice locations predef words) [] where
-    [sitesX, sitesY] = map (\d -> map (\x -> getSite locations x d) $ filter (\x -> isStart locations x d) locations) dirs
-    intersections = map (\l -> (l, findSite l sitesX, findSite l sitesY)) $ filter (isIntersection locations) locations
-    possibilities = map (getPossibilities words) intersections
+resultF locations predef words = map assignedWords $ choices
+    (map (possibilities words) intersections)
+    (verifyChoice predef . assignedWords)
+    [[]] where
+    sites = map (\d -> map (flip (site locations) d) $ filter (flip (isStart locations) d) locations) dirs
+    intersections = map (ap (,) $ flip map sites . findSite) $ filter (isIntersection locations) locations
 
 -- !include ./99-util.hs

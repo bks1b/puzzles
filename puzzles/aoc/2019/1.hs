@@ -1,12 +1,9 @@
 f :: Int -> Int
-f x = div x 3 - 2
+f = subtract 2 . flip div 3
 
 f2 :: Int -> Int
 f2 0 = 0
-f2 x = v + f2 v where v = if f x >= 0 then f x else 0
+f2 x = ap (+) f2 . max 0 . f $ x
 
-solve :: (Int -> Int) -> String -> String
-solve x = show . sum . map x . map read . lines
-
-part1 = solve f
-part2 = solve f2
+solve :: Bool -> String -> String
+solve = (. map read . lines) . ((.) $ show . sum) . map . bool f f2

@@ -1,27 +1,30 @@
-type Positions = [([Int], Char)]
-type Words = [([[Int]], String)]
+-- !include ../../util.hs
 
-dirs = [[1, 0], [0, 1]]
+type Pos = (Int, Int)
+type Positions = [(Pos, Char)]
+type Words = [([Pos], String)]
 
-addDir :: Int -> [Int] -> [Int] -> [Int]
-addDir c = curry $ map (\x -> (fst x) + c * (snd x)) . uncurry zip
+dirs = [(1, 0), (0, 1)]
 
-isIntersection :: [[Int]] -> [Int] -> Bool
-isIntersection locations x = notElem False $ map (\d -> elem (addDir 1 x d) locations || elem (addDir (-1) x d) locations) dirs
+addPos :: Int -> Pos -> Pos -> Pos
+addPos c (x, y) = (x +) . (c *) *** (y +) . (c *)
 
-isStart :: [[Int]] -> [Int] -> [Int] -> Bool
-isStart locations x d = (elem (addDir 1 x d) locations) && (notElem (addDir (-1) x d) locations)
+-- does a given cell continue in both directions
+isIntersection :: [Pos] -> Pos -> Bool
+isIntersection ls x = all (\d -> any (flip elem ls . flip (flip addPos x) d) [-1, 1]) dirs
 
-getPositions :: Words -> Positions
-getPositions = concat . map (uncurry zip)
+-- is a given cell the start of a row or column word
+isStart :: [Pos] -> Pos -> Pos -> Bool
+isStart ls x d = elem (addPos 1 x d) ls && notElem (addPos (-1) x d) ls
 
-sumDir :: [Int] -> Int
-sumDir [x, y] = x + y
+positions :: Words -> Positions
+positions = concatMap $ uncurry zip
 
-findSite :: [Int] -> [[[Int]]] -> [[Int]]
-findSite l = fromJust . find (elem l)
+findSite :: Pos -> [[Pos]] -> [Pos]
+findSite = (fromJust .) . find . elem
 
-allUnique :: Eq k => Eq a => [(k, a)] -> [k] -> Bool
-allUnique vals keys = notElem False $ map (\k -> length (nub $ filter (\v -> fst v == k) vals) < 2) keys
+-- every key has only 1 corresponding unique value
+allUnique :: (Eq a, Eq b) => (a -> b) -> [a] -> Bool
+allUnique = (. nub) . ap (==) . nubBy . on (==)
 
 -- !include ./99-io.hs

@@ -1,4 +1,4 @@
--- !include ../util.hs
+-- !include ../math.hs
 
 n = 2000000
 

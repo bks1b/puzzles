@@ -1,4 +1,4 @@
-import Data.Char
+import Data.Char (digitToInt)
 
 n = 100
 

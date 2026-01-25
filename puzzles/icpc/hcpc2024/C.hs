@@ -1,21 +1,22 @@
-import Control.Monad
+import Data.List (uncons)
+import Data.Bool (bool)
+import Data.Maybe (fromJust)
+import Control.Monad (ap)
 
 readN = read :: String -> Int
 
-insertAt :: [a] -> a -> Int -> [a]
-insertAt x e 0 = e : x
-insertAt (x : xs) e i = x : insertAt xs e (i - 1)
+insertAt :: Int -> a -> [a] -> [a]
+insertAt 0 = (:)
+insertAt i = (uncurry (:) .) . (. fromJust . uncons) . fmap . insertAt (i - 1)
 
 orderings :: Int -> [[Int]]
 orderings 1 = [[1]]
-orderings n = concat
-    $ map (\(i, o) ->
-        map (insertAt o n) $ [r, s] !! (mod i 2))
-    $ zip [0..] $ orderings (n - 1)
-    where r = [0..n - 1]; s = reverse r
+orderings n = concat $ zipWith
+    ((. ap bool reverse [0..n - 1]) . map . flip (flip insertAt n))
+    (orderings $ n - 1)
+    (cycle [False, True])
 
 main :: IO [()]
 main = getLine
-    >>= (return . orderings . readN)
-    >>= (\x -> print (length x)
-        >> sequence (map (putStrLn . unwords . map show) x))
+    >>= return . orderings . readN
+    >>= liftA2 (>>) (print . length) ((sequence .) $ map $ putStrLn . unwords . map show)
