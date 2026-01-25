@@ -15,7 +15,7 @@ primes = fix (\f (x : xs) -> x : f (filter ((0 /=) . flip mod x) xs)) [2..]
 
 sieveA :: Int -> Array Int Bool
 sieveA n = runSTArray $ newArray (1, len) True >>= \arr ->
-    (forM_ [1..len] $ \i -> (readArray arr i >>=) . flip when
+    forM_ [1..len] (\i -> (readArray arr i >>=) . flip when
         $ forM_ [3 * i + 1, 5 * i + 2..len]
         $ flip (writeArray arr) False)
     >> return arr

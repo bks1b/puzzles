@@ -9,7 +9,7 @@ showGrid = intercalate "\n" . tail . concat
     . iterate (drop size)
     where
         cycled = concat $ replicate blockSize $ True : replicate (blockSize - 1) False
-        joinRow = tail . concat . zipWith ((. (' ' :) . (: " ")) . id . bool id ('|' :)) cycled
+        joinRow = tail . concat . zipWith ((. (' ' :) . (: " ")) . bool id ('|' :)) cycled
         emptyRow = uncurry intercalate . fmap (replicate blockSize . replicate (3 * blockSize)) . bool ("|", ' ') ("+", '-')
 
 result = intercalate "\n\n\n" . map showGrid . solve . readGrid

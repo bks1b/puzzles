@@ -16,7 +16,7 @@ splitInput = (***) lines (lines . drop 2) . fromJust
 
 showOutput :: Positions -> [String] -> String
 showOutput p = intercalate "\n" . zipWith
-    (\y -> zipWith (\x -> flip fromMaybe $ fmap snd $ find ((== (x, y)) . fst) p) [0..])
+    (\y -> zipWith (\x -> flip (flip maybe snd) $ find ((== (x, y)) . fst) p) [0..])
     [0..]
 
 resultF :: [Pos] -> Positions -> [String] -> [Words]

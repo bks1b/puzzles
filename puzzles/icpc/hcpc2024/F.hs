@@ -25,6 +25,6 @@ cell = subtract 1 . fromJust . flip elemIndex "._OX"
 board = (. split) $ map $ groupVertically . map (map (map cell) . split)
 
 main :: IO ()
-main = sequence (replicate (n * n) getLine) >>= 
+main = replicateM (n * n) getLine >>= 
     putStrLn . (["UNFINISHED", "DRAW", "OLGA", "XENIYA"] !!)
     . (+ 1) . state . map (map state) . board

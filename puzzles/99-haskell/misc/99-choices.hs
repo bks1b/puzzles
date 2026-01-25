@@ -3,7 +3,7 @@ type Possibilities = [(String, String, Intersection)]
 
 -- efficiently filters choice functions
 choices :: [[a]] -> ([a] -> Bool) -> [[a]] -> [[a]]
-choices (x : xs) f = choices xs f . filter f . concatMap (\y -> map (: y) x)
+choices (x : xs) f = choices xs f . concatMap (\y -> filter f $ map (: y) x)
 choices _ _ = id
 
 -- pairs of words which are possible at a given intersection

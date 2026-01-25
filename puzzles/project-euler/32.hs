@@ -13,8 +13,8 @@ eq = (==) . uncurry (on (*) readL)
 
 validPerms :: [Int] -> Int
 validPerms s = foldr
-    (\r -> (+) $ if any (\q -> any (flip eq r . flip splitAt q) range) rest then r else 0)
-    0 $ map readL $ permutations s where
+    ((\r -> (+) $ if any (\q -> any (flip eq r . flip splitAt q) range) rest then r else 0) . readL)
+    0 $ permutations s where
     rest = permutations $ filter (flip notElem s) [1..n]
     range = [1..n - length s - 1]
 

@@ -27,4 +27,4 @@ setAt 0 = (. tail) . (:)
 setAt i = (. fromJust . uncons) . (uncurry (:) .) . fmap . setAt (i - 1)
 
 splitOn :: Char -> String -> [String]
-splitOn c = (uncurry $ (. fromMaybe [] . fmap (splitOn c . snd) . uncons) . (:)) . span (/= c)
+splitOn c = uncurry ((. maybe [] (splitOn c . snd) . uncons) . (:)) . span (/= c)

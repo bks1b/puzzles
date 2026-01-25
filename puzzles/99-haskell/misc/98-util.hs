@@ -18,14 +18,14 @@ instance Show Game where
     show game = intercalate "\n" $ (++)
         -- cells and inputs of each row
         (zipWith ((. map (bool "_|" "X|" . (> 0)) . take (snd $ size game))
-            . ((.) $ ('|' :) . concat)
+            . (.) (('|' :) . concat)
             . flip (++) . map ((' ' :) . show))
             (rows game)
             $ iterate (drop $ snd $ size game)
             $ grid game)
         -- inputs of each column
-        (map (concatMap $ (' ' :) . fromMaybe " " . fmap (show . fst) . uncons)
-            $ takeWhile (any $ not . null)
+        (map (concatMap $ (' ' :) . maybe " " (show . fst) . uncons)
+            $ takeWhile (not . all null)
             $ iterate (map $ drop 1)
             $ cols game)
 
