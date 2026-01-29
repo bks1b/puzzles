@@ -1,5 +1,5 @@
 comp
-dotnet build ${src} -o temp --self-contained --property WarningLevel=0 --verbosity q
+dotnet build ${src} -o temp --self-contained --verbosity q
 dotnet temp/main.dll
 
 ${content}

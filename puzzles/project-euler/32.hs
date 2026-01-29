@@ -1,6 +1,7 @@
--- !include ../util.hs
-
 n = 9
+
+readL :: [Int] -> Int
+readL = read . concatMap show
 
 subsets :: [Int] -> [[[Int]]]
 subsets a@(x : xs) = ([[]] :) $ (++ [[a]])

@@ -1,4 +1,4 @@
-Console.ReadLine()!;
+Console.ReadLine();
 var nums = Console.ReadLine()!.Split().Select(int.Parse).OrderDescending().ToArray();
 int incr = 0;
 int i = 0;

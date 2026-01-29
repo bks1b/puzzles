@@ -3,8 +3,6 @@ import Data.Bool (bool)
 import Data.Maybe (fromJust)
 import Control.Monad (ap)
 
-readN = read :: String -> Int
-
 insertAt :: Int -> a -> [a] -> [a]
 insertAt 0 = (:)
 insertAt i = (uncurry (:) .) . (. fromJust . uncons) . fmap . insertAt (i - 1)
@@ -20,4 +18,4 @@ main :: IO [()]
 main = getLine >>= liftA2 (>>)
     (print . length)
     ((sequence .) $ map $ putStrLn . unwords . map show)
-    . orderings . readN
+    . orderings . read

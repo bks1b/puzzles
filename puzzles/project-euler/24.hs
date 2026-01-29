@@ -4,7 +4,7 @@ n = 1000000
 arr = [0..9]
 
 permute :: Int -> Int -> [Int] -> [Int]
-permute _ _ a@[x] = a
+permute _ _ a@[_] = a
 permute f k a = x : permute (div f $ length a - 1) (mod k f) (delete x a)
     where x = a !! div k f
 

@@ -14,6 +14,7 @@ Directories can specify whether to use predefined boilerplate, or to use standal
 - Standalone files can read the input from stdin.
 - In case of boilerplate, the file is expected to have a function which takes the input string as its only parameter, and returns the result in any format. By default, it is expected to be called `result`.
   - In case of C, the function takes a `FILE*` and prints the result.
+- Some directories (eg. `leetcode`) have files which cannot be executed locally, and are meant to be submitted to an online judging system.
 
 Lines which match `!include <path>` inside a comment are replaced with the file's content at the given path (relative to the current file), and this is repeated recursively.
 This is useful for sharing functions between different files.

@@ -1,7 +1,3 @@
-readN = read :: String -> Int
-showN = show :: Int -> String
-readL = (readN . concatMap showN) :: [Int] -> Int
-
 intSqrt = floor . sqrt . fromIntegral
 intLog = log . fromIntegral
 intLogBase b = logBase (fromIntegral b) . fromIntegral

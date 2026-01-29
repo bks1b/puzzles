@@ -1,8 +1,3 @@
 -- !include ../math.hs
 
-f :: Int -> Int -> Int
-f n k = if mod n k == 0 && isPrime k
-    then k
-    else f n (k - 1)
-
-result = show . ap f intSqrt . read
+result = show . fromJust . (\n -> find (liftA2 (&&) ((== 0) . mod n) isPrime) [intSqrt n, intSqrt n - 1..]) . read
