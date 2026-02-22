@@ -12,7 +12,7 @@ import Data.Maybe
 import Data.Function
 import Data.Bool (bool)
 import Control.Monad
-import Control.Arrow ((***), (&&&))
+import Control.Arrow
 
 ${content}
 

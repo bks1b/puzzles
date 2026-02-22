@@ -1,7 +1,7 @@
 readInput :: [String] -> ([Pos], Positions)
-readInput = foldr (\(y, l) -> flip (foldr $ \(x, s) -> let p = (x, y) in (***)
+readInput = foldr (\(y, l) -> flip (foldr $ \(x, s) -> let p = (x, y) in
     (if s == ' ' then id else (p :))
-    (if elem s ". " then id else ((p, s) :))) $ zip [0..] l) ([], []) . zip [0..]
+    *** (if elem s ". " then id else ((p, s) :))) $ zip [0..] l) ([], []) . zip [0..]
 
 -- builds the cells of a site in a given direction
 site :: [Pos] -> Pos -> Pos -> [Pos]
@@ -11,7 +11,7 @@ site a x d = (x :) $ if elem next a
     where next = addPos 1 x d
 
 splitInput :: String -> ([String], [String])
-splitInput = (***) lines (lines . drop 2) . fromJust
+splitInput = (lines *** lines . drop 2) . fromJust
     . find ((== "\n\n") . take 2 . snd) . splits
 
 showOutput :: Positions -> [String] -> String

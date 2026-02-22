@@ -14,9 +14,9 @@ block = (. pos) . join (***) $ (blockSize *) . flip div blockSize
 connected :: Int -> [Int]
 connected = map (idxBy size)
     . (\((cx, cy), (bx, by)) -> concatMap
-        (flip map [(cx,), (, cy), liftA2 (,) ((bx +) . flip mod blockSize) ((by +) . flip div blockSize)] . flip id)
+        (flip map [(cx,), (, cy), ((bx +) . flip mod blockSize) &&& ((by +) . flip div blockSize)] . flip id)
         blockIndices)
-    . (&&&) pos block
+    . (pos &&& block)
 
 -- possible indices of a value
 possibleCells :: Char -> String -> [Int]

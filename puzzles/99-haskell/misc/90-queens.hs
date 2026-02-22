@@ -1,5 +1,5 @@
 queens :: Int -> [[Int]]
-queens = (. (&&&) (enumFromTo 1) (flip (!!))) $ uncurry $ flip id
+queens = flip (.) (enumFromTo 1 &&& flip (!!)) $ uncurry $ flip id
     . flip iterate [[]]
     . concatMap
     . flip (\l -> map (: l) . filter (\y ->

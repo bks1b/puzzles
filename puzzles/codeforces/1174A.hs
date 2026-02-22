@@ -3,7 +3,7 @@ replaceFirst (x : xs) a b = if x == a then b : xs else x : replaceFirst xs a b
 
 main :: IO ()
 main = do
-    n <- fmap read getLine
+    n <- readLn
     (first, last) <- fmap (splitAt n . map read . words) getLine
     let (a, b) = (maximum first, minimum last)
     let eq = sum first == sum last

@@ -1,6 +1,3 @@
-holes :: [a] -> [(a, [a])]
-holes = map (uncurry $ (. fromJust . uncons) . fmap . (++)) . init . splits
-
 perms :: [a] -> ([(a, b)] -> Bool) -> [(a, b)] -> [b] -> [[(a, b)]]
 perms (x : xs) f r = concatMap (uncurry $ ap (bool (const []) . perms xs f) f . (: r) . (x,)) . holes
 perms _ _ r = const [r]

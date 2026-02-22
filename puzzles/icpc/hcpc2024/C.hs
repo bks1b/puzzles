@@ -15,7 +15,7 @@ orderings n = concat $ zipWith
     (cycle [False, True])
 
 main :: IO [()]
-main = getLine >>= liftA2 (>>)
+main = readLn >>= liftA2 (>>)
     (print . length)
     ((sequence .) $ map $ putStrLn . unwords . map show)
-    . orderings . read
+    . orderings

@@ -1,7 +1,6 @@
-n = 9
+-- !include ../util.hs
 
-readL :: [Int] -> Int
-readL = read . concatMap show
+n = 9
 
 subsets :: [Int] -> [[[Int]]]
 subsets a@(x : xs) = ([[]] :) $ (++ [[a]])
@@ -19,4 +18,4 @@ validPerms s = foldr
     rest = permutations $ filter (flip notElem s) [1..n]
     range = [1..n - length s - 1]
 
-result _ = show $ foldl' (foldl' (\b -> (b +) . validPerms)) 0 $ drop (div n 2) $ subsets [1..n]
+result _ = show $ foldl' (foldl' $ (. validPerms) . (+)) 0 $ drop (div n 2) $ subsets [1..n]

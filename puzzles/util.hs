@@ -2,7 +2,15 @@ intSqrt = floor . sqrt . fromIntegral
 intLog = log . fromIntegral
 intLogBase b = logBase (fromIntegral b) . fromIntegral
 
+splits :: [a] -> [([a], [a])]
 splits = zip . inits <*> tails
+
+holes :: [a] -> [(a, [a])]
+holes = map (uncurry $ (. fromJust . uncons) . fmap . (++)) . init . splits
+
+permutationsLex :: [a] -> [[a]]
+permutationsLex [] = [[]]
+permutationsLex l = concatMap (uncurry $ (. permutationsLex) . map . (:)) $ holes l
 
 idxBy :: Int -> (Int, Int) -> Int
 idxBy x = uncurry (+) . fmap (* x)
@@ -24,3 +32,6 @@ setAt i = (. fromJust . uncons) . (uncurry (:) .) . fmap . setAt (i - 1)
 
 splitOn :: Char -> String -> [String]
 splitOn c = uncurry ((. maybe [] (splitOn c . snd) . uncons) . (:)) . span (/= c)
+
+readL :: [Int] -> Int
+readL = foldl' ((+) . (10 *)) 0
