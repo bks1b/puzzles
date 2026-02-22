@@ -1,0 +1,1 @@
+main = getLine >> getLine >>= print . sum . (scanl1 max >>= zipWith (-)) . map read . words

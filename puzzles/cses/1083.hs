@@ -1,0 +1,1 @@
+main = readLn >>= \n -> getLine >>= print . (div (n * n + n) 2 -) . sum . map read . words

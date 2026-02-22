@@ -1,0 +1,1 @@
+main = readLn >>= print . sum . drop 1 . takeWhile (/= 0) . iterate (flip div 5)
